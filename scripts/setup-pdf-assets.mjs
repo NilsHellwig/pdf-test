@@ -7,7 +7,8 @@ const require = createRequire(import.meta.url);
 mkdirSync("public", { recursive: true });
 
 copyFileSync(
-  require.resolve("pdfjs-dist/build/pdf.worker.min.mjs"),
+  // Legacy build: includes polyfills for older browsers (e.g. Safari 18).
+  require.resolve("pdfjs-dist/legacy/build/pdf.worker.min.mjs"),
   "public/pdf.worker.min.mjs",
 );
 

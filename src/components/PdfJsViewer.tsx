@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BASE_PATH } from "@/lib/basePath";
-import "pdfjs-dist/web/pdf_viewer.css";
+import "pdfjs-dist/legacy/web/pdf_viewer.css";
 
 /** Uses the official pdf.js PDFViewer component (same engine as Firefox' built-in viewer). */
 export default function PdfJsViewer({ url }: { url: string }) {
@@ -14,11 +14,11 @@ export default function PdfJsViewer({ url }: { url: string }) {
     let destroy: (() => void) | undefined;
 
     (async () => {
-      const pdfjsLib = await import("pdfjs-dist");
+      const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
       pdfjsLib.GlobalWorkerOptions.workerSrc = `${BASE_PATH}/pdf.worker.min.mjs`;
       // pdf_viewer.mjs reads the core library from this global.
       (globalThis as unknown as { pdfjsLib: typeof pdfjsLib }).pdfjsLib = pdfjsLib;
-      const { EventBus, PDFLinkService, PDFViewer } = await import("pdfjs-dist/web/pdf_viewer.mjs");
+      const { EventBus, PDFLinkService, PDFViewer } = await import("pdfjs-dist/legacy/web/pdf_viewer.mjs");
 
       const container = containerRef.current;
       if (cancelled || !container) return;
