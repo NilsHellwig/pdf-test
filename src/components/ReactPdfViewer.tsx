@@ -1,12 +1,14 @@
 "use client";
 
+// Must run before pdf.js streams text content (Safari).
+import "@/lib/readable-stream-async-iterator.mjs";
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { BASE_PATH } from "@/lib/basePath";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `${BASE_PATH}/pdf.worker.min.mjs`;
+pdfjs.GlobalWorkerOptions.workerSrc = `${BASE_PATH}/pdf.worker.mjs`;
 
 export default function ReactPdfViewer({ url }: { url: string }) {
   const [numPages, setNumPages] = useState(0);

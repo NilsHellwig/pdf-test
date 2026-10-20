@@ -1,5 +1,7 @@
 "use client";
 
+// Must run before pdf.js streams text content (Safari).
+import "@/lib/readable-stream-async-iterator.mjs";
 import { useEffect, useRef, useState } from "react";
 import { BASE_PATH } from "@/lib/basePath";
 import "pdfjs-dist/legacy/web/pdf_viewer.css";
@@ -15,7 +17,7 @@ export default function PdfJsViewer({ url }: { url: string }) {
 
     (async () => {
       const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `${BASE_PATH}/pdf.worker.min.mjs`;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `${BASE_PATH}/pdf.worker.mjs`;
       // pdf_viewer.mjs reads the core library from this global.
       (globalThis as unknown as { pdfjsLib: typeof pdfjsLib }).pdfjsLib = pdfjsLib;
       const { EventBus, PDFLinkService, PDFViewer } = await import("pdfjs-dist/legacy/web/pdf_viewer.mjs");

@@ -1,4 +1,4 @@
-// Copies the pdf.js worker into public/ and generates a multi-page sample PDF.
+// Sets up the pdf.js worker in public/ and generates a multi-page sample PDF.
 import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
@@ -6,10 +6,17 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 const require = createRequire(import.meta.url);
 mkdirSync("public", { recursive: true });
 
+// Legacy build: includes polyfills for older browsers (e.g. Safari 18).
 copyFileSync(
-  // Legacy build: includes polyfills for older browsers (e.g. Safari 18).
   require.resolve("pdfjs-dist/legacy/build/pdf.worker.min.mjs"),
-  "public/pdf.worker.min.mjs",
+  "public/pdf.worker.legacy.min.mjs",
+);
+// The legacy build still lacks async iteration of ReadableStream, so the worker entry
+// loads our polyfill first (module imports evaluate in order).
+copyFileSync("src/lib/readable-stream-async-iterator.mjs", "public/readable-stream-async-iterator.mjs");
+writeFileSync(
+  "public/pdf.worker.mjs",
+  'import "./readable-stream-async-iterator.mjs";\nimport "./pdf.worker.legacy.min.mjs";\n',
 );
 
 const doc = await PDFDocument.create();
@@ -32,4 +39,4 @@ for (let i = 1; i <= 3; i++) {
 }
 
 writeFileSync("public/sample.pdf", await doc.save());
-console.log("public/pdf.worker.min.mjs + public/sample.pdf written");
+console.log("pdf.js worker + public/sample.pdf written");
