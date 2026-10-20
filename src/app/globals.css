@@ -154,6 +154,17 @@ h1 {
   color: #1a1d21;
 }
 
+.show {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+}
+
 .status {
   font-size: 0.85rem;
   color: var(--muted);

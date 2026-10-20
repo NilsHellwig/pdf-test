@@ -127,6 +127,9 @@ export function ViewerTests() {
   const [input, setInput] = useState(initialUrl);
   const [url, setUrl] = useState(initialUrl);
   const [results, setResults] = useState<Record<string, Result>>({});
+  // Variants load on demand: one crashing viewer (e.g. Safari's PDF plugin) shouldn't take
+  // down the whole page, and testers can tell which one caused it.
+  const [shown, setShown] = useState<Set<string>>(new Set());
   const origin = window.location.origin;
   const userAgent = navigator.userAgent;
 
@@ -163,7 +166,8 @@ export function ViewerTests() {
       <h1>PDF-Viewer Test</h1>
       <p className="intro">
         Verschiedene Arten, ein PDF einzubetten. Bitte jede Variante durchscrollen (alle 3 Seiten
-        sichtbar?) und mit 👍/👎 bewerten. Unten kann das Ergebnis kopiert werden.
+        sichtbar?) und mit 👍/👎 bewerten. Varianten einzeln öffnen – stürzt die Seite ab, war es die
+        zuletzt geöffnete. Unten kann das Ergebnis kopiert werden.
       </p>
 
       <div className="toolbar">
@@ -190,7 +194,13 @@ export function ViewerTests() {
         <section key={v.id} id={v.id} className="card">
           <h2>{v.title}</h2>
           <p className="desc">{v.desc}</p>
-          {v.render(url, absoluteUrl)}
+          {shown.has(v.id) ? (
+            v.render(url, absoluteUrl)
+          ) : (
+            <button className="show" onClick={() => setShown((prev) => new Set(prev).add(v.id))}>
+              Anzeigen
+            </button>
+          )}
           <div className="feedback">
             <button
               className="ok"
